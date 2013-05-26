@@ -105,9 +105,7 @@ dbSendUpdate(db, paste0(
 	and t1.dest = t2.dest
 	with no data"))
 
-
-	
-# insert skims into the 'matched' table dpeending on time period
+# insert skims into the 'matched' table according to time period
 for(i in c("am", "pm")) {
 	
 	times <- ifelse(i == "am", 1, 5)
@@ -125,22 +123,18 @@ for(i in c("am", "pm")) {
 
 # create columns in the matched skim tables and trip tables to store the skim results
 dbSendUpdate(db, paste0("alter table matched_skims add column matched float"))
+dbSendUpdate(db, paste0("alter table trip_table add column dist float"))
 
+# set the 'matched' column in matched_skims to the distance from the mode chosen
 dbSendUpdate(db, paste0("update matched_skims set matched = sov where mode = 'SOV'"))
 dbSendUpdate(db, paste0("update matched_skims set matched = hov2 where mode = 'HOV2'"))
 dbSendUpdate(db, paste0("update matched_skims set matched = hov3 where mode = 'HOV3'"))
 dbSendUpdate(db, paste0("update matched_skims set matched = walk where mode = 'Walk'"))
 dbSendUpdate(db, paste0("update matched_skims set matched = bike where mode = 'Bike'"))
 	
-# update trip table to contain a column representing the trip distance
-dbSendUpdate(db, paste0("alter table trip_table add column dist float"))
-	
-dbSendUpdate(db, paste0(
+# update trip table to contain trip distance
+dbSendUpdate(db,
 	"update trip_table set dist = 
-	(select matched_skims.matched
+	(select matched
 	from matched_skims
-	where trip_table.idkey = matched_skims.idkey)"))
-
-		
-		
-
+	where trip_table.idkey = matched_skims.idkey)")
