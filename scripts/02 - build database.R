@@ -1,4 +1,30 @@
 # ----------------------------------
+# This script imports data from a fictionalized and small-scale activity-based travel model 
+# into a database and performs some typical travel data operations on it including matching 
+# trips to skims.
+# 
+# Although the fictional data could be analyzed within R, actual activity-based model data are
+# much larger and require the use of a database backend. The goal for these scripts is to 
+# *illustrate* how this can be done using MonetDB. Scale up thse scrips to your application as
+# required.
+#
+# Code for MonetDB creation borrowed liberally from Anthony Damico's US government survey data project:
+# https://github.com/ajdamico/usgsd
+# ----------------------------------
+
+# ----------------------------------
+# Warning: MonetDB required
+# Prior to running this script, MonetDB must be installed on the local machine. Follow each step outlined on this page: 
+# https://github.com/ajdamico/usgsd/blob/master/MonetDB/monetdb%20installation%20instructions.R                                   #
+# Credit to Anthony Damico
+# ----------------------------------
+
+require(MonetDB.R)
+
+# Set your working directory as required 
+# setwd("C:/...")
+
+# ----------------------------------
 # Build database
 # ----------------------------------
 
