@@ -33,14 +33,14 @@ batfile <-
 	monetdb.server.setup(
 		
 		# set the path to the directory where the initialization batch file and all data will be stored
-		database.directory = paste0( getwd() , "/MonetDB" ) ,
+		database.directory = paste0(getwd(), "/MonetDB") ,
 		# must be empty or not exist
 		
 		# find the main path to the monetdb installation program
-		monetdb.program.path = "C:/Program Files/MonetDB/MonetDB5" ,
+		monetdb.program.path = "C:/Program Files/MonetDB/MonetDB5",
 		
 		# choose a database name
-		dbname = "traveldata" ,
+		dbname = "traveldata",
 		
 		# choose a database port
 		# this port should not conflict with other monetdb databases
@@ -62,9 +62,8 @@ batfile
 pid <- monetdb.server.start(batfile)
 dbname <- "traveldata"
 dbport <- 62000
-drv <- dbDriver("MonetDB")
-monet.url <- paste0( "monetdb://localhost:" , dbport , "/" , dbname )
-db <- dbConnect( drv , monet.url , "monetdb" , "monetdb" )
+monet.url <- paste0("monetdb://localhost:", dbport, "/", dbname)
+db <- dbConnect(MonetDB.R(), monet.url , "monetdb" , "monetdb")
 
 # ---------------------------------------------------
 # Disconnect from database (store for future use)
@@ -77,12 +76,11 @@ db <- dbConnect( drv , monet.url , "monetdb" , "monetdb" )
 # Build the database
 # ---------------------------------------------------
 
-# set working directory to the location where you've downloaded the data files
-# https://github.com/aakarner/travel-model-analyses/tree/master/data
-
-monet.read.csv(db, "sample_trip table.csv", "trip_table", 5000, locked = TRUE)
-monet.read.csv(db, "dist_skims_am.csv", "skims_am", 50^2, locked = TRUE)
-monet.read.csv(db, "dist_skims_pm.csv", "skims_pm", 50^2, locked = TRUE)
+travel.files <- dir("data", full.name = TRUE)
+	
+monet.read.csv(db, travel.files[grepl("trip_table.csv", travel.files)], "trip_table", 5000, locked = TRUE)
+monet.read.csv(db, travel.files[grepl("dist_skims_am.csv", travel.files)], "skims_am", 50^2, locked = TRUE)
+monet.read.csv(db, travel.files[grepl("dist_skims_pm.csv", travel.files)], "skims_pm", 50^2, locked = TRUE)
 
 # create a primary key on the trip table
 dbSendUpdate(db, "alter table trip_table add column idkey int auto_increment")
